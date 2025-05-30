@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit the Sale Order Form View -->
+        <record id="view_order_form_with_approvals" model="ir.ui.view">
+            <field name="name">sale.order.form.with.approvals</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!-- Add Approval Buttons in the Header -->
+                <xpath expr="//header" position="inside">
+                    <!-- Modify the default Confirm button to be visible only in 'approved' state -->
+                    <!--xpath expr="//button[@name='action_confirm']" position="attributes">
+                        <attribute name="invisible">state != 'marketing_approval' and state != 'technical_approval'
+                        </attribute>
+                    </xpath-->
+                    <!-- Modify the default Send by Email button to be visible only in 'approved' state -->
+                    <!--xpath expr="//button[@name='action_rfq_send']" position="attributes">
+                        <attribute name="invisible">state != 'approved'</attribute>
+                        <attribute name="class">oe_highlight</attribute>
+                    </xpath-->
+                    <!--xpath expr="//button[@name='action_rfq_send']" position="attributes">
+                        <attribute name="attrs">{'invisible': [('state', '!=', 'approved')]}</attribute>
+                    </xpath-->
+                    <button name="action_submit_for_marketing_approval" string="Submit for SM Approval"
+                            type="object"
+                            groups="sales_team.group_sale_salesman"
+                            invisible="state != 'draft'"/>
+                    <button name="action_marketing_approve"
+                            string="Approve"
+                            type="object"
+                            groups="sale_approval_workflow.group_marketing_manager"
+                            invisible="state != 'marketing_approval'"
+                    />
+                    <button name="action_technical_approve"
+                            string="Approve"
+                            type="object"
+                            groups="sale_approval_workflow.group_technical_manager"
+                            invisible="state != 'technical_approval'"
+                    />
+                    <!--button name="action_send_quotation"
+                            string="Send Quotation"
+                            type="object"
+                            groups="sales_team.group_sale_salesman"
+                             invisible="state != 'approved'"
+                            /-->
+                    <!--button name="check_rfq_send_state"
+                            string="Send Quotation"
+                            type="object"
+                            groups="sales_team.group_sale_salesman"
+                            invisible="state != 'approved'"
+                            class="oe_highlight"/-->
+                </xpath>
+
+                <!-- Update the State Field to Reflect New States -->
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,marketing_approval,technical_approval,approved,sent,sale"/>
+                </xpath>
+            </field>
+        </record>
+        <!--record id="sale_order_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            < Locate the Send by Email button >
+            <xpath expr="//button[@name='action_rfq_send']" position="attributes">
+                <attribute name="attrs">{'invisible': [('state', '!=', 'approved')]}</attribute>
+            </xpath>
+        </field>
+    </record-->
+    </data>
+</odoo>

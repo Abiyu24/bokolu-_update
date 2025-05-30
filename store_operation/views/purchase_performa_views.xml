@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- Purchase performa Form View -->
+        <record id="view_purchase_performa_form" model="ir.ui.view">
+            <field name="name">purchase.performa.form</field>
+            <field name="model">purchase.performa</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Performa">
+                    <header>
+                        <button name="create_purchase_order" string="Create Purchase Order"
+                                type="object" class="btn-secondary"
+                                invisible="performa_status or compare_performa == 'draft'"/>
+                        <button name="action_calculate_performa" string="Calculate" type="object" class="secondary"/>
+                        <!--button name="action_done" states="won" string="Done" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_done" invisible="state not in ['won']" string="Done" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_reject" states="draft" string="Cancel" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_reject" invisible="state not in ['won']"  string="Cancel" type="object"
+                                class="btn-secondary"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div name="button_box" position="inside">
+                            <button
+                                    type="object"
+                                    name="purchase_order_action"
+                                    class="oe_stat_button"
+                                    icon="fa-shopping-cart"
+                                    invisible="purchase_order_count == 0"
+                            >
+                                <field
+                                        name="purchase_order_count"
+                                        widget="statinfo"
+                                        string="Purchase Order"
+                                />
+                            </button>
+                        </div>
+                        <div class="oe_title" style="text-align: center;">
+                            <h1 style="text-align: center;">
+                                <p style="text-align: center;">PURCHASE PERFORMA</p>
+                            </h1>
+                        </div>
+                        <div>
+                            <hr/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Purchase Performa"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <hr/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="representative_id" widget="many2many_tags"
+                                      readonly="state in ['won', 'cancel']"/>
+                                <field name="request_id" widget="many2one_clickable"
+                                       readonly="state in ['won', 'cancel']"/>
+                                <field name="store_request_id"/>
+                                <field name="purchase_request_id"/>
+                                <field name="performa_status" invisible="1"/>
+                                <field name="compare_performa" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="start_date" readonly="state in ['won', 'cancel']"/>
+                                <field name="end_date" readonly="state in ['won', 'cancel']"/>
+                                <field name="warehouse_id" areadonly="state in ['won', 'cancel']"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Performa Lines" name="performa_line">
+                                <div style="overflow-x: auto;">
+                                    <field name="performa_line_ids" nolabel="1"
+                                           readonly="state in ['won', 'cancel']">
+                                        <tree readonly="True" delete="1" create="1" string="performa_line">
+                                            <field name="product_id"/>
+                                            <field name="last_vendor_id"/>
+                                            <field name="last_vendor_price_unit"/>
+                                            <field name="product_qty"/>
+                                            <field name="product_uom"/>
+                                            <field name="price_unit"/>
+                                            <field name="product_quality_range"/>
+                                            <field name="partner_id" required="1"/>
+                                            <field name="warranty"/>
+                                            <field name="response"/>
+                                            <field name="vendor_tag"/>
+                                            <field name="vendor_types"/>
+                                            <field name="representative_id" widget="many2many_tags"/>
+                                            <field name="state"/>
+                                        </tree>
+                                        <form>
+                                            <sheet>
+                                                <group>
+                                                    <field name="product_id"/>
+                                                    <field name="last_vendor_id"/>
+                                                    <field name="last_vendor_price_unit"/>
+                                                    <field name="product_qty"/>
+                                                    <field name="product_uom"/>
+                                                    <field name="price_unit"/>
+                                                    <field name="product_quality_range"/>
+                                                    <field name="partner_id" required="1"/>
+                                                    <field name="warranty"/>
+                                                    <field name="response"/>
+                                                    <field name="vendor_tag"/>
+                                                    <field name="vendor_types"/>
+                                                    <field name="representative_id" widget="many2many_tags"/>
+                                                    <field name="state"/>
+                                                </group>
+                                            </sheet>
+                                        </form>
+                                    </field>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Purchase performa Tree View -->
+        <record id="view_purchase_performa_tree" model="ir.ui.view">
+            <field name="name">purchase.performa.tree</field>
+            <field name="model">purchase.performa</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="name"/>
+                    <field name="request_id"/>
+                    <field name="representative_id" widget="many2many_tags"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Purchase performa Action -->
+        <record id="action_purchase_performa" model="ir.actions.act_window">
+            <field name="name">Purchase Performa</field>
+            <field name="res_model">purchase.performa</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new performa.
+                </p>
+            </field>
+        </record>
+
+
+        <!-- Form View -->
+        <record id="view_vendor_tag_form" model="ir.ui.view">
+            <field name="name">vendor.tag.form</field>
+            <field name="model">vendor.tag</field>
+            <field name="arch" type="xml">
+                <form string="Vendor Tag">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Enter Vendor Tag Name" required="True"/>
+                            </h1>
+                        </div>
+
+                        <!-- Form Body -->
+                        <notebook>
+                            <!-- General Tab -->
+                            <page string="General Information">
+                                <group>
+                                    <group>
+                                        <field name="description" required="True"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                    <!-- Chatter Section -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_vendor_tag_tree" model="ir.ui.view">
+            <field name="name">vendor.tag.tree</field>
+            <field name="model">vendor.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Vendor Tag">
+                    <field name="name" required="True"/>
+                    <field name="description" required="True"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_vendor_tag" model="ir.actions.act_window">
+            <field name="name">Vendor Tag</field>
+            <field name="res_model">vendor.tag</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create vendor tag.
+                </p>
+            </field>
+        </record>
+        <record id="view_vendor_contract_tree" model="ir.ui.view">
+            <field name="name">vendor.contract.tree</field>
+            <field name="model">vendor.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Vendor Contracts">
+                    <field name="name"/>
+                    <field name="vendor_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_vendor_contract_form" model="ir.ui.view">
+            <field name="name">vendor.contract.form</field>
+            <field name="model">vendor.contract</field>
+            <field name="arch" type="xml">
+                <form string="Vendor Contract">
+                    <header>
+                        <!--button name="action_active" states="draft" string="Active" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_active" invisible="state not in ['draft']" string="Active" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                states="active"/-->
+                        <button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                invisible="state not in ['active']"/>
+                        <!--button name="action_expire" states="active" string="Expire" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_expire" invisible="state not in ['active']" string="Expire" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_cancel" states="draft,active" string="Cancel" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_cancel" invisible="state not in ['draft','active']" string="Cancel" type="object"
+                                class="btn-secondary"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Vendor Contract"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="purchase_order_id" readonly=" state != 'draft'"/>
+                            <field name="vendor_id" readonly="state != 'draft'"/>
+                            <field name="start_date" readonly=" state != 'draft'"/>
+                            <field name="end_date" readonly=" state != 'draft'"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Terms Conditions">
+                                <field name="pricing_terms" readonly=" state != 'draft'"/>
+                                <field name="payment_terms" readonly=" state != 'draft'"/>
+                                <field name="delivery_schedule" readonly=" state != 'draft'"/>
+                                <field name="quality_requirements"
+                                       readonly="state != 'draft'"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_vendor_contract" model="ir.actions.act_window">
+            <field name="name">Vendor Contracts</field>
+            <field name="res_model">vendor.contract</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="vendor_contract_action" model="ir.actions.act_window">
+            <field name="name">Vendor Contract</field>
+            <field name="res_model">vendor.contract</field>
+            <field name="view_mode">form,tree</field>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</odoo>

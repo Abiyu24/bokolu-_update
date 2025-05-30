@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_approval_workflow_marketing,access.sale.approval.workflow.marketing,model_sale_approval_workflow,sale_approval_workflow.group_marketing_manager,1,1,1,1
+access_sale_approval_workflow_technical,access.sale.approval.workflow.technical,model_sale_approval_workflow,sale_approval_workflow.group_technical_manager,1,1,1,1
+access_sale_approval_workflow_base_user,access.sale.approval.workflow.base.user,model_sale_approval_workflow,base.group_user,1,0,0,0

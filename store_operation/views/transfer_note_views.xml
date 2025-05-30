@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- -->
+        <record id="view_transfer_voucher_form" model="ir.ui.view">
+            <field name="name">transfer.note.form</field>
+            <field name="model">transfer.note</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Note">
+                    <header>
+                        <!--button name="action_submit" states="draft" invisible="state not in ['confirm']" string="Submit" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_submit"  invisible="state not in ['draft']" string="Submit" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                states="submit"/-->
+                        <button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                invisible="state not in ['submit']"/>
+                        <!--button name="action_validate" states="approve" string="Validate" type="object"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                class="btn-secondary"/-->
+                        <button name="action_validate" invisible="state not in ['approve']" string="Validate" type="object"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                class="btn-secondary"/>
+                        <!--button name="action_approve" states="submit" string="Approve" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_approve"  invisible="state not in ['submit']" string="Approve" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_reject" states="draft,submit" string="Cancel" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_reject" invisible="state not in ['draft','submit']" string="Cancel" type="object"
+                                class="btn-secondary"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div name="button_box" position="inside">
+                            <button
+                                    type="object"
+                                    name="action_view_transfer"
+                                    class="oe_stat_button"
+                                    icon="fa-truck"
+                                  invisible="transfer_count == 0"
+                            >
+                                <field
+                                        name="transfer_count"
+                                        widget="statinfo"
+                                        string="Transfers"
+                                />
+                            </button>
+                        </div>
+                        <div style="text-align: center;">
+                            <h1 style="text-align: center;">
+                                <p style="text-align: center;"> Transfer Note</p>
+                            </h1>
+                        </div>
+                        <div>
+                            <hr/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Transfer Note"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <hr/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="requester_id"/>
+                                <field name="warehouse_id" string="Source Warehouse" readonly="state not in ['draft']"/>
+                                <field name="location_id" string="Source Location"
+                                       readonly="state not in ['draft']"
+                                       domain="[('usage', '=', 'internal')]"/>
+                            </group>
+                            <group>
+                                <field name="date" readonly="state not in ['draft']"/>
+                                <field name="destination_warehouse_id"
+                                       readonly="state not in ['draft']"/>
+                                <field name="destination_location_id" domain="[('usage', '=', 'internal')]"
+                                       readonly="state not in ['draft']"/>
+                                <field name="reason" readonly="state not in ['draft']"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Transfer Lines">
+                                <field name="voucher_lines" nolabel="1"
+                                       readonly="state not in ['draft']">
+                                    <tree editable="bottom">
+                                        <field name="sequence_number"/>
+                                        <field name="product_id"/>
+                                        <field name="qty_available" readonly="True"/>
+                                        <field name="quantity"/>
+                                        <field name="product_uom_id"/>
+                                        <field name="unit_price" string="Unit Price"/>
+                                        <field name="product_catagory"
+                                               options="{'no_create': True, 'no_create_edit':True}"/>
+                                        <field name="total_price" string="Total Price"/>
+                                        <field name="remark"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <div>
+                            <hr/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="approved_manager_id" readonly="True" string="Approved by"/>
+                                <field name="approved_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <hr/>
+                        </group>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for  -->
+        <record id="view_transfer_note_voucher_tree" model="ir.ui.view">
+            <field name="name">transfer.note.tree</field>
+            <field name="model">transfer.note</field>
+            <field name="arch" type="xml">
+                <tree string="Transfer Note">
+                    <field name="name"/>
+                    <field name="requester_id"/>
+                    <field name="date"/>
+                    <field name="location_id"/>
+                    <field name="destination_location_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for  Line -->
+        <record id="view_transfer_note_line_form" model="ir.ui.view">
+            <field name="name">transfer.note.line.form</field>
+            <field name="model">transfer.note.line</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Note Line">
+                    <sheet>
+                        <group>
+                            <field name="sequence_number"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="unit_price" string="Unit Price"/>
+                            <field name="product_catagory"/>
+                            <field name="total_price" string="Total Price"/>
+                            <field name="remark"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for Line -->
+        <record id="view_transfer_note_voucher_line_tree" model="ir.ui.view">
+            <field name="name">transfer.note.line.tree</field>
+            <field name="model">transfer.note.line</field>
+            <field name="arch" type="xml">
+                <tree string="Transfer Note Lines">
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_transfer_note_voucher" model="ir.actions.act_window">
+            <field name="name">Transfer Note</field>
+            <field name="res_model">transfer.note</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,35 @@
+<odoo>
+    <data>
+        <record id="view_product_template_form_inherit" model="ir.ui.view">
+            <field name="name">product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <!-- Insert the new partner field in the General Information tab -->
+                <xpath expr="//field[@name='uom_po_id']" position="after">
+                    <field name="vendor_id" string="Vendor"/>
+                    <field name="vendor_price_unit" string="Vendor Price"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_search_view_inherit_partner" model="ir.ui.view">
+            <field name="name">product.template.search.inherit.partner</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <!-- Add partner_id as a group by option -->
+                <field name="categ_id" position="after">
+                    <field
+                            name="vendor_id"
+                            string="Vendor"
+                            filter_domain="[('partner_id','ilike',self)]"
+                    />
+                </field>
+                <group expand="1" string="Group By">
+                    <filter string="Vendor" name="group_by_vendor" context="{'group_by':'vendor_id'}"/>
+                </group>
+            </field>
+        </record>
+
+    </data>
+</odoo>

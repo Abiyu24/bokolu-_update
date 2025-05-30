@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data noupdate="1">
+        <record id="seq_store_request_id" model="ir.sequence">
+            <field name="name">Store Request Sequence</field>
+            <field name="code">store.request</field>
+            <field name="prefix">SR-</field>
+            <field name="padding">5</field>
+            <field name="implementation">standard</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_purchase_request_id" model="ir.sequence">
+            <field name="name">Purchase Request Sequence</field>
+            <field name="code">purchase.request</field>
+            <field name="prefix">PR-</field>
+            <field name="padding">4</field>
+            <field name="implementation">standard</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_store_issue_id" model="ir.sequence">
+            <field name="name">Store Issue Sequence</field>
+            <field name="code">store.issue.voucher</field>
+            <field name="prefix">SIV-</field>
+            <field name="padding">5</field>
+            <field name="implementation">standard</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_purchase_performa_id" model="ir.sequence">
+            <field name="name">Purchase Performa Sequence</field>
+            <field name="code">purchase.performa</field>
+            <field name="prefix">PR/PER-</field>
+            <field name="padding">5</field>
+            <field name="implementation">standard</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <record id="seq_vendor_contract" model="ir.sequence">
+            <field name="name">Vendor Contract</field>
+            <field name="code">vendor.contract</field>
+            <field name="prefix">CON-</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="implementation">standard</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</odoo>

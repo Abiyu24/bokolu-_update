@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form view for Store Issue Voucher -->
+        <record id="view_store_issue_voucher_form" model="ir.ui.view">
+            <field name="name">store.issue.voucher.form</field>
+            <field name="model">store.issue.voucher</field>
+            <field name="arch" type="xml">
+                <form string="Store Issue Voucher">
+                    <header>
+                        <!--button name="action_submit" states="draft" string="Submit" type="object"
+                                class="btn-secondary"/-->
+                         <button name="action_submit" invisible="state not in ['draft']" string="Submit" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                states="submit"/-->
+                         <button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                invisible="state not in ['submit']"/>
+                        <!--button name="action_validate" states="approve" string="Validate" type="object"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                class="btn-secondary"/-->
+                        <button name="action_validate" invisible="state not in ['approve']" string="Validate" type="object"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                class="btn-secondary"/>
+                        <!--button name="action_approve" states="submit" string="Approve" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_approve" invisible="state not in ['submit']" string="Approve" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_reject" states="draft,submit" string="Cancel" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_reject" invisible="state not in ['draft','submit']" string="Cancel" type="object"
+                                class="btn-secondary"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div name="button_box" position="inside">
+                            <button
+                                    type="object"
+                                    name="action_view_transfer"
+                                    class="oe_stat_button"
+                                    icon="fa-truck"
+                                    invisible="transfer_count == 0"
+                            >
+                                <field
+                                        name="transfer_count"
+                                        widget="statinfo"
+                                        string="Transfers"
+                                />
+                            </button>
+                        </div>
+                        <div style="text-align: center;">
+                            <h1 style="text-align: center;">
+                                <p style="text-align: center;">STOCK ISSUE VOUCHER</p>
+                            </h1>
+                        </div>
+                        <div>
+                            <hr/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Stock Issue Voucher"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <hr/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="warehouse_id" string="Source Warehouse"
+                                       readonly="state != 'draft'"/>
+                                <field name="requester_id"/>
+                                <field name="location_id" string="Source Location"
+                                       readonly="state != 'draft'"
+                                       domain="[('usage', '=', 'internal')]"/>
+                                <field name="date" readonly="state != 'draft'"/>
+                                <field name="request_id"/>
+                            </group>
+                            <group>
+                                <field name="destination_location_id" domain="[('usage', '=', 'internal')]"
+                                       readonly="state != 'draft'"/>
+                                <field name="ref" readonly="state != 'draft'"/>
+                                <field name="reason" readonly="state != 'draft'"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Voucher Lines">
+                                <field name="voucher_lines" nolabel="1" widget="one2many_list"
+                                       readonly="state != 'draft'">
+                                    <tree>
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="product_uom_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <div>
+                            <hr/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="approved_manager_id" readonly="True" string="Approved by"/>
+                                <field name="approved_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <hr/>
+                        </group>
+                        <div class="oe_title" style="text-align: center;">
+                            <p style="margin-bottom: 30px;">Distribution:-
+                                Original - <b>Finance</b> - 1st Copy - <b>Store</b> -
+                                2nd Copy -
+                                <b>Pad
+                                    (Requesting Unit)
+                                </b>
+                            </p>
+                        </div>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for Store Issue Voucher -->
+        <record id="view_store_issue_voucher_tree" model="ir.ui.view">
+            <field name="name">store.issue.voucher.tree</field>
+            <field name="model">store.issue.voucher</field>
+            <field name="arch" type="xml">
+                <tree string="Store Issue Vouchers" create="false">
+                    <field name="name"/>
+                    <field name="requester_id"/>
+                    <field name="date"/>
+                    <field name="location_id"/>
+                    <field name="destination_location_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Store Issue Voucher Line -->
+        <record id="view_store_issue_voucher_line_form" model="ir.ui.view">
+            <field name="name">store.issue.voucher.line.form</field>
+            <field name="model">store.issue.voucher.line</field>
+            <field name="arch" type="xml">
+                <form string="Store Issue Voucher Line">
+                    <sheet>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for Store Issue Voucher Line -->
+        <record id="view_store_issue_voucher_line_tree" model="ir.ui.view">
+            <field name="name">store.issue.voucher.line.tree</field>
+            <field name="model">store.issue.voucher.line</field>
+            <field name="arch" type="xml">
+                <tree string="Store Issue Voucher Lines">
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_store_issue_voucher" model="ir.actions.act_window">
+            <field name="name">Store Issue</field>
+            <field name="res_model">store.issue.voucher</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</odoo>

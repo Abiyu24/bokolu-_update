@@ -1,0 +1,19 @@
+<odoo>
+
+    <!-- Goods Receiving Note (GRN) Report -->
+    <record id="action_report_grn" model="ir.actions.report">
+        <field name="name">GRN Report</field>
+        <field name="model">good.reciving.note.transfer</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">store_operation.report_grn_template</field>
+        <field name="print_report_name">'Report-%s' % object.name</field>
+    </record>
+    <record id="action_report_don" model="ir.actions.report">
+        <field name="name">DON Report</field>
+        <field name="model">delivery.order.note</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">store_operation.report_don_template</field>
+        <field name="print_report_name">'Report-%s' % object.name</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,36 @@
+<odoo><!-- Add this to your module's XML file -->
+    <record id="action_report_dot" model="ir.actions.report">
+        <field name="name">Delivery Order Transfer Report</field>
+        <field name="model">delivery.order.transfer</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">store_operation.report_dot</field>
+        <field name="report_file">store_operation.report_dot</field>
+        <field name="binding_model_id" ref="model_delivery_order_transfer"/>
+        <field name="binding_type">report</field>
+    </record>
+     <template id="report_dot_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Delivery Order Transfer: <span t-esc="doc.name"/></h2>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>UoM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.line_ids" t-as="line">
+                                <td><span t-esc="line.product_id.display_name"/></td>
+                                <td><span t-esc="line.product_qty"/></td>
+                                <td><span t-esc="line.uom_id.name"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

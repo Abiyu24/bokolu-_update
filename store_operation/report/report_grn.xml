@@ -1,0 +1,164 @@
+<!-- report_grn.xml -->
+<odoo>
+    <data>
+        <template id="report_grn_template">
+            <t t-call="web.html_container">
+                <t t-set="head" t-call="web.external_layout" t-foreach="docs" t-as="doc">
+                    <h3 align="center">
+                        <b>
+                            <u>Good Receiving Note</u>
+                        </b>
+                    </h3>
+                    <p align="right">
+                        <strong>N<u>O</u>:
+                        </strong>
+                        <span t-esc="doc.name"/>
+                    </p>
+                    <p align="right">
+                        <strong>Date:</strong>
+                        <span t-esc="doc.expected_date"/>
+                    </p>
+                    <div style="margin-top: 30px;">
+                        <div style="float: left;">
+                            <p>
+                                <strong>Received From:</strong>
+                                <span t-esc="doc.recieved_id.name"/>
+                            </p>
+                            <p>
+                                <strong>Requested by:</strong>
+                                <span t-esc="doc.requester_id.name"/>
+                            </p>
+                        </div>
+                        <div style="float: right;">
+                            <p>
+                                <strong>Destination location:</strong>
+                                <span t-esc="doc.dest_location_id.name"/>
+                            </p>
+                            <p>
+                                <strong>Store Code</strong>
+                                <span t-esc="doc.store_code"/>
+                            </p>
+                            <p>
+                                <strong>Truck plate no</strong>
+                                <span t-esc="doc.truck_plate_no"/>
+                            </p>
+                        </div>
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Description</th>
+                                <th>Unit</th>
+                                <th>Qty</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.line_ids" t-as="line" t-foreach-index="index">
+                                <td>
+                                    <t t-esc="(index or 0) + 1"/>
+                                </td>
+                                <td>
+                                    <span t-esc="line.product_id.name"/>
+                                </td>
+                                <td>
+                                    <span t-esc="line.uom_id.name"/>
+                                </td>
+                                <td>
+                                    <span t-esc="line.product_qty"/>
+                                </td>
+                                <td>
+                                    <span t-esc="line.remark"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <p>
+                        <strong>Remark:</strong>
+                        <span t-esc="doc.remark"/>
+                        <t t-if="not doc.remark">
+                            <span>______________________________________________________________________________</span>
+                        </t>
+                    </p>
+                    <br/>
+                    <p style="text-align: justify; margin-bottom: 30px; margin-top: 60px;">
+                        <span style="display: inline-block; width: 30%; text-align: left;">
+                            <strong>inspected by :</strong>
+                            <span t-esc="doc.inspected_manager_id.name"/>
+                            <t t-if="not doc.inspected_manager_id.name">
+                                <span>________________</span>
+                            </t>
+                        </span>
+                        <span style="display: inline-block; width: 30%; text-align: center;">
+                            Signature_____________
+                        </span>
+                        <span style="display: inline-block; width: 30%; text-align: right;">
+                            <strong>Date :</strong>
+                            <span t-esc="doc.inspected_date"/>
+                            <t t-if="not doc.inspected_date">
+                                <span>_____________</span>
+                            </t>
+                        </span>
+                    </p>
+                    <p style="text-align: justify; margin-bottom: 30px;">
+                        <span style="display: inline-block; width: 30%; text-align: left;">
+                            <strong>Checked by :</strong>
+                            <span t-esc="doc.checked_manager_id.name"/>
+                            <t t-if="not doc.checked_manager_id.name">
+                                <span>________________</span>
+                            </t>
+                        </span>
+                        <span style="display: inline-block; width: 30%; text-align: center;">
+                            Signature_____________
+                        </span>
+                        <span style="display: inline-block; width: 30%; text-align: right;">
+                            <strong>Date :</strong>
+                            <span t-esc="doc.checked_date"/>
+                            <t t-if="not doc.checked_date">
+                                <span>_____________</span>
+                            </t>
+                        </span>
+                    </p>
+                    <p style="text-align: justify; margin-bottom: 30px;">
+                        <span style="display: inline-block; width: 30%; text-align: left;">
+                            <strong>Received by :</strong>
+                            <span t-esc="doc.recieved_manager_id.name"/>
+                            <t t-if="not doc.recieved_manager_id.name">
+                                <span>________________</span>
+                            </t>
+                        </span>
+                        <span style="display: inline-block; width: 30%; text-align: center;">
+                            Signature_____________
+                        </span>
+                        <span style="display: inline-block; width: 30%; text-align: right;">
+                            <strong>Date :</strong>
+                            <span t-esc="doc.recieved_date"/>
+                            <t t-if="not doc.recieved_date">
+                                <span>_____________</span>
+                            </t>
+                        </span>
+                    </p>
+                    <p style="text-align: justify; margin-bottom: 30px;">Distribution:-
+                        <span style="margin-right: 10px;">Original
+                            <b>W - Supplier</b>
+                        </span>
+                        <span style="margin-right: 10px;">1st Copy
+                            <b>Y - Account</b>
+                        </span>
+                        <span style="margin-right: 10px;">2nd Copy
+                            <b>P - External</b>
+                        </span>
+                        <span style="margin-right: 10px;">3rd Copy
+                            <b>B- Purchasing</b>
+                        </span>
+                        <span style="margin-right: 10px;">4th Copy <b>P- External</b> 5th Copy
+                            <b>G - Pad</b>
+                        </span>
+                    </p>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

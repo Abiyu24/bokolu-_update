@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Model Definition -->
+        <!--record id="model_sale_approval_workflow" model="ir.model">
+            <field name="name">Sale Approval Workflow</field>
+            <field name="model">x_sale_approval_workflow</field>
+            <field name="info">Sale Approval Workflow Model</field>
+        </record-->
+
+        <!-- Sale Approval Workflow User Group -->
+        <record id="group_sale_approval_workflow_user" model="res.groups">
+            <field name="name">Sale Approval Workflow User</field>
+            <field name="category_id" ref="base.module_category_sales"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Marketing Manager Group -->
+        <record id="group_marketing_manager" model="res.groups">
+            <field name="name">Marketing Manager</field>
+            <field name="category_id" ref="base.module_category_sales"/>
+        </record>
+
+        <!-- Technical Manager Group -->
+        <record id="group_technical_manager" model="res.groups">
+            <field name="name">Technical Manager</field>
+            <field name="category_id" ref="base.module_category_sales"/>
+        </record>
+
+        <!-- Restrict Marketing Approval to Marketing Manager -->
+        <record id="rule_marketing_approve" model="ir.rule">
+            <field name="name">Marketing Manager Approval Rule</field>
+            <field name="model_id" ref="model_sale_approval_workflow"/>
+            <field name="groups" eval="[(4, ref('sale_approval_workflow.group_marketing_manager'))]"/>
+            <field name="domain_force">[('state', '=', 'marketing_approval')]</field>
+        </record>
+
+        <!-- Restrict Technical Approval to Technical Manager -->
+        <record id="rule_technical_approve" model="ir.rule">
+            <field name="name">Technical Manager Approval Rule</field>
+            <field name="model_id" ref="model_sale_approval_workflow"/>
+            <field name="groups" eval="[(4, ref('sale_approval_workflow.group_technical_manager'))]"/>
+            <field name="domain_force">[('state', '=', 'technical_approval')]</field>
+        </record>
+    </data>
+</odoo>

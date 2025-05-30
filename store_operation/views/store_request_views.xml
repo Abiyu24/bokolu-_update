@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_store_request_form" model="ir.ui.view">
+            <field name="name">store.request.form</field>
+            <field name="model">store.request</field>
+            <field name="arch" type="xml">
+                <form string="Store Request">
+                    <header>
+                        <!--button name="create_purchase_request" states="approve"
+                                string="Create Purchase Request"
+                                type="object"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                class="btn-secondary"/-->
+                        <button name="create_purchase_request" invisible="state not in ['approve']"
+                                string="Create Purchase Request"
+                                type="object"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                class="btn-secondary"/>
+                        <!--button name="create_issue_voucher" string="Create SIV" states="approve,on_request"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                type="object" class="btn-secondary"/-->
+                        <button name="create_issue_voucher" string="Create SIV" invisible="state not in ['approve', 'on_request']"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"
+                                type="object" class="btn-secondary"/>
+                        <!--button name="action_submit" states="draft" string="Submit" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_submit"  invisible="state not in ['draft']" string="Submit" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                states="submit,check"/-->
+                        <button name="action_draft" type="object" string="Set to Draft" class="btn-secondary"
+                                invisible="state not in ['submit','check']"/>
+
+                        <!--button name="action_check" states="submit" string="Check" type="object"
+                                class="btn-secondary"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"/-->
+                        <button name="action_check" invisible="state not in ['submit']" string="Check" type="object"
+                                class="btn-secondary"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"/>
+                        <!--button name="action_approve" states="check" string="Approve" type="object"
+                                class="btn-secondary"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"/-->
+                         <button name="action_approve" invisible="state not in ['check']" string="Approve" type="object"
+                                class="btn-secondary"
+                                groups="store_operation.group_stock_manager,store_operation.group_stock_admin"/>
+
+                        <!--button name="action_receive" states="on_siv" string="Receive" type="object"
+                                class="btn-secondary"/-->
+                        <button name="action_receive" invisible="state not in ['on_siv']" string="Receive" type="object"
+                                class="btn-secondary"/>
+                        <!--button name="action_reject" states="draft,submit" string="Cancel" type="object"
+                                class="btn-secondary"/-->
+                         <button name="action_reject" invisible="state not in ['draft','submit']" string="Cancel" type="object"
+                                class="btn-secondary"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div name="button_box" position="inside">
+                            <button
+                                    type="object"
+                                    name="pr_action"
+                                    class="oe_stat_button"
+                                    icon="fa-shopping-cart"
+                                    invisible="pr_count == 0"
+                            >
+                                <field
+                                        name="pr_count"
+                                        widget="statinfo"
+                                        string="Purchase Request"
+                                />
+                            </button>
+                            <button
+                                    type="object"
+                                    name="siv_action"
+                                    class="oe_stat_button"
+                                    icon="fa-truck"
+                                    invisible="siv_count == 0"
+                            >
+                                <field
+                                        name="siv_count"
+                                        widget="statinfo"
+                                        string="SIV"
+                                />
+                            </button>
+                            <button
+                                    type="object"
+                                    name="action_view_transfer"
+                                    class="oe_stat_button"
+                                    icon="fa-truck"
+                                    invisible="transfer_count == 0"
+                            >
+                                <field
+                                        name="transfer_count"
+                                        widget="statinfo"
+                                        string="Transfers"
+                                />
+                            </button>
+                        </div>
+                        <div class="oe_title" style="text-align: center;">
+                            <h1 style="text-align: center;">
+                                <p style="text-align: center;">STOCK REQUISITION</p>
+                            </h1>
+                        </div>
+                        <div>
+                            <hr/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Stock Request Order"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                                <field name="state" invisible="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <hr/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="requester_id" readonly="state not in ['draft']"/>
+                                <field name="approved_by"  readonly="state not in ['draft']" required="1"/>
+                                <field name="checked_manager_id" readonly="state not in ['draft']" required="1"/>
+                                <field name="warehouse_id" options="{'no_create': True, 'no_create_edit':True}" readonly="state not in ['draft']"/>
+                                <field name="location_id" options="{'no_create': True, 'no_create_edit':True}" domain="[('usage', '=', 'internal')]"/>
+                                <field name="destination_location_id" domain="[('usage', '=', 'internal')]" readonly="state not in ['draft']" options="{'no_create': True, 'no_create_edit':True}"/>
+                            </group>
+                            <group>
+                                <field name="requested_date" readonly="state not in ['draft']"/>
+                                <field name="reason" readonly="state not in ['draft']"/>
+                                <field name="ref" readonly="state not in ['draft']"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Request Lines">
+                                <field name="request_lines" nolabel="1" readonly="state not in ['draft']">
+                                    <tree editable="bottom">
+                                        <field name="sequence_number"/>
+                                        <field name="item_code"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                                        <field name="qty_available" string="Stock Balance"/>
+                                        <field name="quantity"/>
+                                        <field name="uom_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                                        <field name="remark"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                        <field name="remark"  readonly="state not in ['draft']"
+                               placeholder="Remark"/>
+                        <div>
+                            <hr/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="received_manager_id" readonly="True" string="Received by"/>
+                                <field name="digitized_signature" widget="signature"
+                                       readonly="state not in ['draft']"/>
+                                <field name="received_date"/>
+                            </group>
+                            <group>
+                                <field name="approved_manager_id" readonly="True" string="Approved by"/>
+                                <field name="approved_digitized_signature" widget="signature"/>
+                                <field name="approved_date"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group>
+                                <field name="checked_manager_id" readonly="True" string="Checked by"/>
+                                <field name="checked_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <hr/>
+                        </group>
+                        <div class="oe_title" style="text-align: center;">
+                            <p style="margin-bottom: 30px;">Distribution:-
+                                Original - <b>Finance</b> - 1st Copy - <b>Store</b> -
+                                2nd Copy -
+                                <b>Pad
+                                    (Requesting Unit)
+                                </b>
+                            </p>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_store_request_tree_view" model="ir.ui.view">
+            <field name="name">store.request.form</field>
+            <field name="model">store.request</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="requested_date"/>
+                    <field name="warehouse_id"/>
+                    <field name="location_id"/>
+                    <field name="requester_id" string="Requested by"/>
+                    <field name="ref"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record id="view_stock_request_kanban" model="ir.ui.view">
+            <field name="name">stock.request.kanban</field>
+            <field name="model">store.request</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" create="0" sample="1">
+                    <field name="name"/>
+                    <field name="requester_id"/>
+                    <field name="approved_by"/>
+                    <field name="location_id"/>
+                    <field name="destination_location_id"/>
+                    <field name="state"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="d-flex flex-column justify-content-between oe_kanban_global_click container">
+                                <div class="row g-0">
+                                    <div class="o_kanban_details col-12">
+                                        <!-- Display the name (or title) of the record -->
+                                        <strong class="o_kanban_record_title">
+                                            <t t-esc="record.name.value"/>
+                                        </strong>
+
+                                        <!-- Requester Information -->
+                                        <div class="text-muted o_kanban_record_subtitle">
+                                            <span class="text-muted" style="font-size: 0.85em;">By :</span>
+                                            <span class="text-primary" style="font-size: 0.85em;">
+                                                <t t-esc="record.requester_id.value"/>
+                                            </span>
+                                        </div>
+
+                                        <!-- Divider Line (Using a styled div for more control) -->
+                                        <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+
+                                        <!-- Source Location -->
+                                        <div class="mt-2">
+                                            <span class="text-primary" style="font-size: 0.85em;">From:</span>
+                                            <span class="text-success" style="font-size: 0.85em;">
+                                                <t t-esc="record.location_id.value"/>
+                                            </span>
+                                            <span class="text-primary" style="font-size: 0.85em;">- To:</span>
+                                            <span class="text-success" style="font-size: 0.85em;">
+                                                <t t-esc="record.destination_location_id.value"/>
+                                            </span>
+                                        </div>
+
+                                        <!-- Dropdown Actions -->
+                                        <div class="o_dropdown_kanban dropdown mt-3" groups="base.group_user">
+                                            <a role="button" class="dropdown-toggle o-no-caret btn"
+                                               data-bs-toggle="dropdown" href="#"
+                                               aria-label="Dropdown menu" title="Dropdown menu">
+                                                <span class="fa fa-ellipsis-v"/>
+                                            </a>
+                                            <div class="dropdown-menu" role="menu">
+                                                <a t-if="widget.editable" role="menuitem" type="edit"
+                                                   class="dropdown-item">Edit
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status and Approval Actions -->
+                                <div class="d-flex justify-content-end mt-3">
+                                    <!-- Status Badge -->
+                                    <div class="me-2 d-flex align-items-center"
+                                         t-if="!['draft'].includes(record.state.raw_value)">
+                                        <t t-set="classname"
+                                           t-value="{
+                                            'confirm': 'text-bg-warning',
+                                            'validate': 'text-bg-success',
+                                            'on_request': 'text-bg-primary',
+                                            'on_siv': 'text-bg-primary',
+                                            'cancel': 'text-bg-danger',
+                                            'approve': 'text-bg-success',
+                                            'draft': 'text-bg-secondary'
+                                        }[record.state.raw_value] || 'text-bg-light'"/>
+                                        <span t-attf-class="badge rounded-pill {{ classname }}">
+                                            <t t-out="record.state.value"/>
+                                        </span>
+                                    </div>
+                                    <!-- Action Buttons Based on State -->
+                                    <div class="me-2 align-items-center">
+                                        <!-- Approve Button (Visible in confirm state) -->
+                                        <button t-if="record.state.raw_value === 'confirm'" name="action_approve"
+                                                type="object" class="btn btn-link btn-sm ps-0"
+                                                groups="store_operation.group_stock_manager">
+                                            <i class="fa fa-thumbs-up"/>
+                                            Approve
+                                        </button>
+                                        <!-- Set to Draft Button (Visible in confirm state) -->
+                                        <button t-if="record.state.raw_value === 'confirm'" name="action_draft"
+                                                type="object" class="btn btn-link btn-sm ps-0">
+                                            <i class="fa fa-arrow-left"/>
+                                            Set to Draft
+                                        </button>
+                                        <!-- Cancel Button (Visible in draft and confirm state) -->
+                                        <button t-if="['draft', 'confirm'].includes(record.state.raw_value)"
+                                                name="action_cancel" type="object" class="btn btn-link btn-sm ps-0">
+                                            <i class="fa fa-times"/>
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_request_order_search">
+            <field name="name">store.request.order.search</field>
+            <field name="model">store.request</field>
+            <field name="arch" type="xml">
+                <search string="Store Requests Order Search">
+                    <field name="name" string="Store Request Orders"/>
+                    <field name="state"/>
+                    <field name="location_id"/>
+                    <separator/>
+                    <filter
+                            name="unassigned"
+                            string="Unassigned"
+                            domain="[('approved_by','=', False)]"
+                            help="Unassigned Request"
+                    />
+                    <filter
+                            name="assigned_to_me"
+                            domain="[('approved_by','=', uid)]"
+                            help="Assigned to me"
+                    />
+                    <filter
+                            name="my_requests"
+                            domain="[('requester_id','=', uid)]"
+                            help="My requests"
+                    />
+                    <separator/>
+                    <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                    <filter
+                            string="In Progress"
+                            name="open"
+                            domain="[('state','=','confirm')]"
+                    />
+                    <filter
+                            string="Approved"
+                            name="approved"
+                            domain="[('state','=','approve')]"
+                    />
+                    <filter
+                            string="SIV"
+                            name="on_siv"
+                            domain="[('state','=','on_siv')]"
+                    />
+                    <filter
+                            string="On Request"
+                            name="on_request"
+                            domain="[('state','=','on_request')]"
+                    />
+                    <filter string="Finished" name="done" domain="[('state','=','validate')]"/>
+                    <filter
+                            string="Cancelled"
+                            name="cancel"
+                            domain="[('state','=','cancel')]"
+                    />
+                    <group expand="0" string="Group By">
+                        <filter
+                                string="Location Source"
+                                name="location_id"
+                                domain="[]"
+                                context="{'group_by':'location_id'}"
+                        />
+                        <filter
+                                string="Destination Location"
+                                name="destination_location_id"
+                                domain="[]"
+                                context="{'group_by':'destination_location_id'}"
+                        />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_store_request" model="ir.actions.act_window">
+            <field name="name">Store Requests</field>
+            <field name="res_model">store.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('requester_id', '=', uid)]</field>
+            <field name="context">{"search_default_approved_by":uid}</field>
+        </record>
+
+        <record id="action_stock_review" model="ir.actions.act_window">
+            <field name="name">Stock Requests</field>
+            <field name="res_model">store.request</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[
+                '|',
+                ('requester_id', '=', uid),
+                '|',
+                ('approved_manager_id', '=', uid),
+                ('approved_by', '=', uid)
+                ]
+            </field>
+            <field name="context">{"search_default_assigned_to_me":uid}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new store request.
+                </p>
+            </field>
+        </record>
+
+        <record id="view_inventory_slow_moving_tree" model="ir.ui.view">
+            <field name="name">inventory.slow.moving.tree</field>
+            <field name="model">inventory.slow.moving.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="product_id"/>
+                    <field name="default_code"/>
+                    <field name="last_movement_date"/>
+                    <field name="days_since_last_movement"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_inventory_slow_moving_graph" model="ir.ui.view">
+            <field name="name">inventory.slow.moving.graph</field>
+            <field name="model">inventory.slow.moving.report</field>
+            <field name="arch" type="xml">
+                <graph string="Slow Moving Products Report" type="bar">
+                    <!-- The x-axis will display the products -->
+                    <field name="product_id" type="row"/>
+                    <!-- You can also add the days since the last movement as a second measure if needed -->
+                    <field name="days_since_last_movement" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        <record id="action_inventory_slow_moving_report" model="ir.actions.act_window">
+            <field name="name">Slow-Moving Products</field>
+            <field name="res_model">inventory.slow.moving.report</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="help">This report shows slow-moving products based on their movement history.</field>
+        </record>
+
+
+        <!--        &lt;!&ndash; Tree View for Warehouse Tags &ndash;&gt;-->
+        <!--        <record id="view_vendor_type_tree" model="ir.ui.view">-->
+        <!--            <field name="name">vendor.type.tree</field>-->
+        <!--            <field name="model">vendor.type</field>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <tree>-->
+        <!--                    <field name="vendor_id"/>-->
+        <!--                    <field name="vendor_type"/>-->
+        <!--                </tree>-->
+        <!--            </field>-->
+        <!--        </record>-->
+
+        <!--        &lt;!&ndash; Form View for Warehouse Tags &ndash;&gt;-->
+        <!--        <record id="view_vendor_type_form" model="ir.ui.view">-->
+        <!--            <field name="name">vendor.type.form</field>-->
+        <!--            <field name="model">vendor.type</field>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <form>-->
+        <!--                    <sheet>-->
+        <!--                        <div class="oe_title">-->
+        <!--                            <h1>-->
+        <!--                                <field name="vendor_id" placeholder="Enter Vendor" required="True"/>-->
+        <!--                            </h1>-->
+        <!--                        </div>-->
+
+        <!--                        &lt;!&ndash; Form Body &ndash;&gt;-->
+        <!--                        <notebook>-->
+        <!--                            &lt;!&ndash; General Tab &ndash;&gt;-->
+        <!--                            <page string="General Information">-->
+        <!--                                <group>-->
+        <!--                                    <group>-->
+        <!--                                        <field name="vendor_type"/>-->
+        <!--                                        <field name="description" required="True"/>-->
+        <!--                                    </group>-->
+        <!--                                </group>-->
+        <!--                            </page>-->
+
+        <!--                        </notebook>-->
+        <!--                    </sheet>-->
+        <!--                    &lt;!&ndash; Chatter Section &ndash;&gt;-->
+        <!--                    <div class="oe_chatter">-->
+        <!--                        <field name="message_follower_ids" widget="mail_followers"/>-->
+        <!--                        <field name="activity_ids" widget="mail_activity"/>-->
+        <!--                        <field name="message_ids" widget="mail_thread"/>-->
+        <!--                    </div>-->
+        <!--                </form>-->
+        <!--            </field>-->
+        <!--        </record>-->
+
+        <!--        &lt;!&ndash; Action for Warehouse Tags &ndash;&gt;-->
+        <!--        <record id="action_vendor_type_tag" model="ir.actions.act_window">-->
+        <!--            <field name="name">vendor.type</field>-->
+        <!--            <field name="res_model">vendor.type</field>-->
+        <!--            <field name="view_mode">tree,form</field>-->
+        <!--            <field name="help" type="html">-->
+        <!--                <p class="oe_view_nocontent_create">-->
+        <!--                    Click to create a new vendor type.-->
+        <!--                </p>-->
+        <!--            </field>-->
+        <!--        </record>-->
+
+    </data>
+</odoo>
